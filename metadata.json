@@ -1,0 +1,6 @@
+{
+  "name": "The Everest Residences",
+  "description": "Luxury Real Estate Landing Page for The Everest Residences",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
