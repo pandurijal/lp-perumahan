@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ShieldCheck } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 export default function LeadForm() {
   const [formData, setFormData] = useState({
@@ -10,20 +11,33 @@ export default function LeadForm() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState('');
 
   const isPhoneValid = formData.phone.length >= 10;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isPhoneValid) return;
-    
+
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-      setFormData({ name: '', phone: '', email: '', type: '250' });
-    }, 1500);
+    setError('');
+
+    const { error: insertError } = await supabase.from('reservations').insert({
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email || null,
+      unit_type: formData.type,
+    });
+
+    setIsSubmitting(false);
+
+    if (insertError) {
+      setError('Gagal mengirim data. Silakan coba lagi.');
+      return;
+    }
+
+    setIsSuccess(true);
+    setFormData({ name: '', phone: '', email: '', type: '250' });
   };
 
   return (
@@ -127,6 +141,10 @@ export default function LeadForm() {
             >
               {isSubmitting ? 'Mengirim...' : 'Kirim & Dapatkan Penawaran'}
             </button>
+
+            {error && (
+              <p className="mt-4 text-red-500 text-sm text-center">{error}</p>
+            )}
 
             <div className="mt-6 flex justify-center items-center gap-2 text-gray-400">
               <ShieldCheck size={16} />

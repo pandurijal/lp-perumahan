@@ -1,0 +1,15 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? '';
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+export type Reservation = {
+  id?: string;
+  name: string;
+  phone: string;
+  email?: string;
+  unit_type: string;
+  created_at?: string;
+};
