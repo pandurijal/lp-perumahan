@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, UserCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { supabase } from '../lib/supabase';
 
-export default function Navbar() {
+type NavbarProps = {
+  onOpenAuth: () => void;
+  user: any;
+};
+
+export default function Navbar({ onOpenAuth, user }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -13,6 +19,10 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
 
   const navLinks = [
     { name: 'Home', href: '#home' },
@@ -46,16 +56,38 @@ export default function Navbar() {
               {link.name}
             </a>
           ))}
-          <a
-            href="#kontak"
-            className={`px-6 py-2.5 rounded-none text-sm font-medium tracking-wide transition-all ${
-              isScrolled
-                ? 'bg-gold text-white hover:bg-gold-hover'
-                : 'bg-white/10 text-white backdrop-blur-sm border border-white/20 hover:bg-white hover:text-charcoal'
-            }`}
-          >
-            Daftar Sekarang
-          </a>
+          
+          {user ? (
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <UserCircle className={isScrolled ? 'text-charcoal' : 'text-white'} size={24} />
+                <span className={`text-sm ${isScrolled ? 'text-charcoal' : 'text-white'}`}>
+                  {user.user_metadata?.name || user.email}
+                </span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isScrolled
+                    ? 'bg-gray-200 text-charcoal hover:bg-gray-300'
+                    : 'bg-white/10 text-white hover:bg-white/20'
+                }`}
+              >
+                Keluar
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={onOpenAuth}
+              className={`px-6 py-2.5 rounded-none text-sm font-medium tracking-wide transition-all ${
+                isScrolled
+                  ? 'bg-gold text-white hover:bg-gold-hover'
+                  : 'bg-white/10 text-white backdrop-blur-sm border border-white/20 hover:bg-white hover:text-charcoal'
+              }`}
+            >
+              Masuk / Daftar
+            </button>
+          )}
         </div>
 
         {/* Mobile Toggle */}
@@ -87,6 +119,36 @@ export default function Navbar() {
                   {link.name}
                 </a>
               ))}
+              
+              {user ? (
+                <>
+                  <div className="flex items-center space-x-2">
+                    <UserCircle className="text-charcoal" size={24} />
+                    <span className="text-charcoal font-medium">
+                      {user.user_metadata?.name || user.email}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="text-left text-red-600 font-medium"
+                  >
+                    Keluar
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => {
+                    onOpenAuth();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="text-left text-gold font-medium"
+                >
+                  Masuk / Daftar
+                </button>
+              )}
             </div>
           </motion.div>
         )}

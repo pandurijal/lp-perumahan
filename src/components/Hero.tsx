@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { ArrowRight, ShieldCheck, Award, Landmark } from 'lucide-react';
+import heroBg from '../../assets/rumahmewahminimalis.jpg';
 
 export default function Hero() {
   return (
@@ -7,7 +8,7 @@ export default function Hero() {
       {/* Background Image & Overlay */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075&auto=format&fit=crop)' }}
+        style={{ backgroundImage: `url(${heroBg})` }}
       />
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-charcoal/60 via-charcoal/40 to-charcoal/80" />
 
